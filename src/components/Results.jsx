@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { allExams, questions as questionBank } from '../data/questionBank';
+import { exams, questions as questionBank } from '../data/questionBank';
 import './Results.css';
 
 function Results({ customQuestions }) {
@@ -11,26 +11,59 @@ function Results({ customQuestions }) {
     const [exam, setExam] = useState(null);
     const [questions, setQuestions] = useState([]);
     const [userAnswers, setUserAnswers] = useState({});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log('Results component mounted, examId:', examId);
         const savedExam = localStorage.getItem('currentExam');
         const savedAnswers = localStorage.getItem('userAnswers');
 
-        if (savedExam && savedAnswers) {
-            const examData = JSON.parse(savedExam);
-            setExam(examData);
-            setUserAnswers(JSON.parse(savedAnswers));
+        console.log('Saved exam:', savedExam);
+        console.log('Saved answers:', savedAnswers);
 
-            // Get questions for this exam
-            const examQuestions = customQuestions && customQuestions[examId]
-                ? customQuestions[examId]
-                : questionBank[examId] || [];
-            setQuestions(examQuestions);
+        if (savedExam && savedAnswers) {
+            try {
+                const examData = JSON.parse(savedExam);
+                const answersData = JSON.parse(savedAnswers);
+
+                console.log('Parsed exam data:', examData);
+                console.log('Parsed answers data:', answersData);
+
+                setExam(examData);
+                setUserAnswers(answersData);
+
+                // Get questions for this exam
+                let examQuestions = customQuestions && customQuestions[examId]
+                    ? customQuestions[examId]
+                    : questionBank[examId] || [];
+
+                // Filter questions by selected subjects (same as TestInterface)
+                const savedSubjects = localStorage.getItem('selectedSubjects');
+                if (savedSubjects) {
+                    const selectedSubjects = JSON.parse(savedSubjects);
+                    const selectedSubjectNames = Object.keys(selectedSubjects).filter(
+                        subject => selectedSubjects[subject]
+                    );
+
+                    examQuestions = examQuestions.filter(q =>
+                        selectedSubjectNames.includes(q.subject)
+                    );
+
+                    console.log('Filtered by subjects:', selectedSubjectNames);
+                }
+
+                console.log('Questions found:', examQuestions.length);
+                setQuestions(examQuestions);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error parsing localStorage data:', error);
+                setLoading(false);
+            }
         } else {
-            // If no data, redirect to home
-            navigate('/');
+            console.log('No exam or answers in localStorage');
+            setLoading(false);
         }
-    }, [examId, customQuestions, navigate]);
+    }, [examId, customQuestions]);
 
     const [showExplanations, setShowExplanations] = useState(true);
     const [filterSubject, setFilterSubject] = useState('all');
@@ -40,6 +73,7 @@ function Results({ customQuestions }) {
         // Clear localStorage
         localStorage.removeItem('currentExam');
         localStorage.removeItem('userAnswers');
+        localStorage.removeItem('selectedSubjects');
         navigate('/');
     };
 
@@ -103,11 +137,41 @@ function Results({ customQuestions }) {
 
     const filteredQuestions = getFilteredQuestions();
 
-    // Show loading if data not loaded
-    if (!exam || questions.length === 0) {
+    // Show loading while data is being fetched
+    if (loading) {
         return (
             <div className="results-container">
                 <div className="loading">Loading results...</div>
+            </div>
+        );
+    }
+
+    // Show error if no exam data
+    if (!exam) {
+        return (
+            <div className="results-container">
+                <div className="error-message">
+                    <h2>❌ No Exam Data Found</h2>
+                    <p>Please take an exam first before viewing results.</p>
+                    <button className="btn-primary" onClick={() => navigate('/')}>
+                        Go Home
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error if no questions
+    if (questions.length === 0) {
+        return (
+            <div className="results-container">
+                <div className="error-message">
+                    <h2>❌ No Questions Found</h2>
+                    <p>Questions for exam "{exam.title}" could not be loaded.</p>
+                    <button className="btn-primary" onClick={() => navigate('/')}>
+                        Go Home
+                    </button>
+                </div>
             </div>
         );
     }
@@ -117,6 +181,26 @@ function Results({ customQuestions }) {
             <div className="results-header fade-in">
                 <h1>📊 Test Results</h1>
                 <p className="exam-title">{exam.title}</p>
+                {(() => {
+                    const savedSubjects = localStorage.getItem('selectedSubjects');
+                    if (savedSubjects) {
+                        const selectedSubjects = JSON.parse(savedSubjects);
+                        const selectedSubjectNames = Object.keys(selectedSubjects).filter(
+                            subject => selectedSubjects[subject]
+                        );
+                        const allSubjects = Object.keys(selectedSubjects);
+
+                        // Only show if not all subjects are selected
+                        if (selectedSubjectNames.length < allSubjects.length) {
+                            return (
+                                <p className="selected-subjects-info">
+                                    📚 Practiced: {selectedSubjectNames.join(', ')}
+                                </p>
+                            );
+                        }
+                    }
+                    return null;
+                })()}
             </div>
 
             {/* Score Card */}
@@ -338,7 +422,7 @@ function Results({ customQuestions }) {
 
             {/* Actions */}
             <div className="results-actions fade-in">
-                <button className="btn-primary" onClick={onReturnHome}>
+                <button className="btn-primary" onClick={handleReturnHome}>
                     ← Back to Home
                 </button>
             </div>

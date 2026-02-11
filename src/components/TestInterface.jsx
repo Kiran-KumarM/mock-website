@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { allExams, questions as questionBank } from '../data/questionBank';
+import { exams, questions as questionBank } from '../data/questionBank';
 import Timer from './Timer';
 import './TestInterface.css';
 
@@ -14,14 +14,29 @@ function TestInterface({ customQuestions }) {
 
     useEffect(() => {
         const savedExam = localStorage.getItem('currentExam');
+        const savedSubjects = localStorage.getItem('selectedSubjects');
+
         if (savedExam) {
             const examData = JSON.parse(savedExam);
             setExam(examData);
 
             // Get questions for this exam
-            const examQuestions = customQuestions && customQuestions[examId]
+            let examQuestions = customQuestions && customQuestions[examId]
                 ? customQuestions[examId]
                 : questionBank[examId] || [];
+
+            // Filter questions by selected subjects
+            if (savedSubjects) {
+                const selectedSubjects = JSON.parse(savedSubjects);
+                const selectedSubjectNames = Object.keys(selectedSubjects).filter(
+                    subject => selectedSubjects[subject]
+                );
+
+                examQuestions = examQuestions.filter(q =>
+                    selectedSubjectNames.includes(q.subject)
+                );
+            }
+
             setQuestions(examQuestions);
         } else {
             // If no exam in localStorage, redirect to home

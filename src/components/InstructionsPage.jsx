@@ -1,13 +1,25 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { allExams, questions } from '../data/questionBank';
+import { exams, questions } from '../data/questionBank';
 import './InstructionsPage.css';
 
 function InstructionsPage() {
     const { examId } = useParams();
     const navigate = useNavigate();
 
-    // Find the exam
-    const exam = allExams.find(e => e.id === examId);
+    // Subject selection state
+    const [selectedSubjects, setSelectedSubjects] = useState({
+        'Reasoning Ability': true,
+        'English Language': true,
+        'Quantitative Aptitude': true
+    });
+
+    // Find the exam from all categories
+    let exam = null;
+    for (const categoryExams of Object.values(exams)) {
+        exam = categoryExams.find(e => e.id === examId);
+        if (exam) break;
+    }
 
     if (!exam) {
         return (
@@ -22,9 +34,24 @@ function InstructionsPage() {
         );
     }
 
+    const handleSubjectToggle = (subject) => {
+        setSelectedSubjects(prev => ({
+            ...prev,
+            [subject]: !prev[subject]
+        }));
+    };
+
     const handleStartTest = () => {
-        // Save exam to localStorage
+        // Check if at least one subject is selected
+        const hasSelection = Object.values(selectedSubjects).some(val => val);
+        if (!hasSelection) {
+            alert('Please select at least one subject to practice!');
+            return;
+        }
+
+        // Save exam and selected subjects to localStorage
         localStorage.setItem('currentExam', JSON.stringify(exam));
+        localStorage.setItem('selectedSubjects', JSON.stringify(selectedSubjects));
         // Navigate to test page
         navigate(`/test/${examId}`);
     };
@@ -65,6 +92,25 @@ function InstructionsPage() {
                                 <li>Click "Submit Test" when you're done</li>
                                 <li>You can review your answers after submission</li>
                             </ul>
+                        </div>
+
+                        <div className="instruction-section">
+                            <h3>📚 Select Subjects to Practice</h3>
+                            <div className="subject-selection">
+                                {Object.keys(selectedSubjects).map(subject => (
+                                    <label key={subject} className="subject-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubjects[subject]}
+                                            onChange={() => handleSubjectToggle(subject)}
+                                        />
+                                        <span className="checkbox-label">{subject}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <p className="subject-hint">
+                                💡 Select the subjects you want to practice. Questions will be filtered accordingly.
+                            </p>
                         </div>
 
                         <div className="exam-info-box">
