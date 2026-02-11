@@ -51,7 +51,7 @@ function Home({ onStartExam, examCategories, exams, customExams, onSaveCustomExa
     return (
         <div className="home-container">
             <div className="home-header fade-in">
-                <h1>🎓 Banking Exam Portal</h1>
+                <h1>🎓 Banking how to Exam Portal</h1>
                 <p className="subtitle">Prepare for IBPS, SBI, RRB & Other Banking Exams</p>
             </div>
 
