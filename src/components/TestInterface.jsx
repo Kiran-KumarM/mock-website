@@ -1,8 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { allExams, questions as questionBank } from '../data/questionBank';
 import Timer from './Timer';
 import './TestInterface.css';
 
-function TestInterface({ exam, questions, onSubmit }) {
+function TestInterface({ customQuestions }) {
+    const { examId } = useParams();
+    const navigate = useNavigate();
+
+    // Get exam from localStorage (set by InstructionsPage)
+    const [exam, setExam] = useState(null);
+    const [questions, setQuestions] = useState([]);
+
+    useEffect(() => {
+        const savedExam = localStorage.getItem('currentExam');
+        if (savedExam) {
+            const examData = JSON.parse(savedExam);
+            setExam(examData);
+
+            // Get questions for this exam
+            const examQuestions = customQuestions && customQuestions[examId]
+                ? customQuestions[examId]
+                : questionBank[examId] || [];
+            setQuestions(examQuestions);
+        } else {
+            // If no exam in localStorage, redirect to home
+            navigate('/');
+        }
+    }, [examId, customQuestions, navigate]);
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState({});
     const [markedForReview, setMarkedForReview] = useState(new Set());
@@ -49,11 +74,17 @@ function TestInterface({ exam, questions, onSubmit }) {
     };
 
     const confirmSubmit = () => {
-        onSubmit(answers);
+        // Save answers to localStorage
+        localStorage.setItem('userAnswers', JSON.stringify(answers));
+        // Navigate to results
+        navigate(`/results/${examId}`);
     };
 
     const handleTimeUp = () => {
-        onSubmit(answers);
+        // Save answers to localStorage
+        localStorage.setItem('userAnswers', JSON.stringify(answers));
+        // Navigate to results
+        navigate(`/results/${examId}`);
     };
 
     const getQuestionStatus = (question) => {
@@ -77,6 +108,15 @@ function TestInterface({ exam, questions, onSubmit }) {
 
     const currentQ = questions[currentQuestion];
     const statusCounts = getStatusCounts();
+
+    // Show loading if exam or questions not loaded
+    if (!exam || questions.length === 0) {
+        return (
+            <div className="test-interface">
+                <div className="loading">Loading exam...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="test-interface">

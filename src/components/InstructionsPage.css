@@ -1,0 +1,121 @@
+.instructions-page {
+    min-height: 100vh;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.instructions-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.instructions-card {
+    padding: var(--spacing-2xl);
+}
+
+.instructions-card h2 {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    color: var(--primary-light);
+}
+
+.instructions-content {
+    margin-bottom: var(--spacing-xl);
+}
+
+.instruction-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.instruction-section h3 {
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.instruction-section h3::before {
+    content: '▸';
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.instruction-section ul {
+    list-style: none;
+    padding-left: var(--spacing-lg);
+}
+
+.instruction-section li {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    padding-left: var(--spacing-lg);
+    position: relative;
+}
+
+.instruction-section li::before {
+    content: '•';
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-size: 1.5rem;
+    line-height: 1.6;
+}
+
+.instruction-section strong {
+    color: var(--primary-light);
+    font-weight: 600;
+}
+
+.exam-info-box {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+}
+
+.exam-info-box h4 {
+    color: var(--primary-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.exam-info-box p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.instructions-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.instructions-actions button {
+    min-width: 180px;
+}
+
+.error-message {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.error-message h2 {
+    margin-bottom: var(--spacing-xl);
+    color: var(--error);
+}
+
+@media (max-width: 768px) {
+    .instructions-card {
+        padding: var(--spacing-lg);
+    }
+
+    .instructions-actions {
+        flex-direction: column;
+    }
+
+    .instructions-actions button {
+        width: 100%;
+    }
+}

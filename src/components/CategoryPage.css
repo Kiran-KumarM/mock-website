@@ -1,0 +1,128 @@
+.category-page {
+    min-height: 100vh;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.category-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-button {
+    margin-bottom: var(--spacing-xl);
+}
+
+.category-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl) 0;
+}
+
+.category-icon-large {
+    font-size: 6rem;
+    margin-bottom: var(--spacing-lg);
+    filter: drop-shadow(0 4px 8px rgba(99, 102, 241, 0.3));
+}
+
+.category-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.category-description {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.exams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.exam-card {
+    padding: var(--spacing-xl);
+    animation: fadeIn 0.5s ease-out backwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.exam-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.exam-year-badge {
+    display: inline-block;
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: var(--spacing-md);
+}
+
+.exam-card h3 {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.1rem;
+}
+
+.exam-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.detail-icon {
+    font-size: 1.2rem;
+}
+
+.exam-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+    min-height: 3rem;
+}
+
+.error-message {
+    text-align: center;
+    padding: var(--spacing-2xl);
+}
+
+.error-message h2 {
+    margin-bottom: var(--spacing-xl);
+    color: var(--error);
+}
+
+@media (max-width: 768px) {
+    .category-header h1 {
+        font-size: 2rem;
+    }
+
+    .category-icon-large {
+        font-size: 4rem;
+    }
+
+    .exams-grid {
+        grid-template-columns: 1fr;
+    }
+}

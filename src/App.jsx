@@ -1,14 +1,14 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Home from './components/Home';
+import CategoryPage from './components/CategoryPage';
+import InstructionsPage from './components/InstructionsPage';
 import TestInterface from './components/TestInterface';
 import Results from './components/Results';
-import { examCategories, exams, allExams, questions } from './data/questionBank';
+import { examCategories } from './data/questionBank';
 import './App.css';
 
 function App() {
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'test', 'results'
-  const [selectedExam, setSelectedExam] = useState(null);
-  const [userAnswers, setUserAnswers] = useState({});
   const [customExams, setCustomExams] = useState([]);
   const [customQuestions, setCustomQuestions] = useState({});
 
@@ -48,23 +48,6 @@ function App() {
     }
   }, [customQuestions]);
 
-  const handleStartExam = (exam) => {
-    setSelectedExam(exam);
-    setUserAnswers({});
-    setCurrentView('test');
-  };
-
-  const handleSubmitTest = (answers) => {
-    setUserAnswers(answers);
-    setCurrentView('results');
-  };
-
-  const handleReturnHome = () => {
-    setCurrentView('home');
-    setSelectedExam(null);
-    setUserAnswers({});
-  };
-
   const handleSaveCustomExam = (questions, examMetadata) => {
     // Add to custom exams
     setCustomExams(prev => [...prev, examMetadata]);
@@ -93,46 +76,47 @@ function App() {
     localStorage.setItem('customQuestions', JSON.stringify(updatedQuestions));
   };
 
-  // Get questions for current exam (either predefined or custom)
-  const getCurrentQuestions = () => {
-    if (!selectedExam) return [];
-    return selectedExam.isCustom
-      ? customQuestions[selectedExam.id]
-      : questions[selectedExam.id];
-  };
-
   return (
-    <div className="app">
-      {currentView === 'home' && (
-        <Home
-          examCategories={examCategories}
-          exams={exams}
-          customExams={customExams}
-          onStartExam={handleStartExam}
-          onSaveCustomExam={handleSaveCustomExam}
-          onDeleteCustomExam={handleDeleteCustomExam}
-        />
-      )}
+    <BrowserRouter>
+      <div className="app">
+        <Routes>
+          {/* Home page - shows exam categories */}
+          <Route
+            path="/"
+            element={
+              <Home
+                examCategories={examCategories}
+                customExams={customExams}
+                onSaveCustomExam={handleSaveCustomExam}
+                onDeleteCustomExam={handleDeleteCustomExam}
+              />
+            }
+          />
 
-      {currentView === 'test' && selectedExam && (
-        <TestInterface
-          exam={selectedExam}
-          questions={getCurrentQuestions()}
-          onSubmit={handleSubmitTest}
-        />
-      )}
+          {/* Category page - shows exams for a category */}
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
 
-      {currentView === 'results' && selectedExam && (
-        <Results
-          exam={selectedExam}
-          questions={getCurrentQuestions()}
-          userAnswers={userAnswers}
-          onReturnHome={handleReturnHome}
-        />
-      )}
-    </div>
+          {/* Instructions page - shows test instructions */}
+          <Route path="/instructions/:examId" element={<InstructionsPage />} />
+
+          {/* Test page - the actual exam */}
+          <Route
+            path="/test/:examId"
+            element={<TestInterface customQuestions={customQuestions} />}
+          />
+
+          {/* Results page - shows results after exam */}
+          <Route
+            path="/results/:examId"
+            element={<Results customQuestions={customQuestions} />}
+          />
+
+          {/* 404 - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
 export default App;
-

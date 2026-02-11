@@ -1,10 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { allExams, questions as questionBank } from '../data/questionBank';
 import './Results.css';
 
-function Results({ exam, questions, userAnswers, onReturnHome }) {
+function Results({ customQuestions }) {
+    const { examId } = useParams();
+    const navigate = useNavigate();
+
+    // Get exam and answers from localStorage
+    const [exam, setExam] = useState(null);
+    const [questions, setQuestions] = useState([]);
+    const [userAnswers, setUserAnswers] = useState({});
+
+    useEffect(() => {
+        const savedExam = localStorage.getItem('currentExam');
+        const savedAnswers = localStorage.getItem('userAnswers');
+
+        if (savedExam && savedAnswers) {
+            const examData = JSON.parse(savedExam);
+            setExam(examData);
+            setUserAnswers(JSON.parse(savedAnswers));
+
+            // Get questions for this exam
+            const examQuestions = customQuestions && customQuestions[examId]
+                ? customQuestions[examId]
+                : questionBank[examId] || [];
+            setQuestions(examQuestions);
+        } else {
+            // If no data, redirect to home
+            navigate('/');
+        }
+    }, [examId, customQuestions, navigate]);
+
     const [showExplanations, setShowExplanations] = useState(true);
     const [filterSubject, setFilterSubject] = useState('all');
     const [showPdfViewer, setShowPdfViewer] = useState(false);
+
+    const handleReturnHome = () => {
+        // Clear localStorage
+        localStorage.removeItem('currentExam');
+        localStorage.removeItem('userAnswers');
+        navigate('/');
+    };
 
     // Calculate results
     const calculateResults = () => {
@@ -65,6 +102,15 @@ function Results({ exam, questions, userAnswers, onReturnHome }) {
     };
 
     const filteredQuestions = getFilteredQuestions();
+
+    // Show loading if data not loaded
+    if (!exam || questions.length === 0) {
+        return (
+            <div className="results-container">
+                <div className="loading">Loading results...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="results-container">
