@@ -29,7 +29,24 @@ function Results({ customQuestions }) {
                 console.log('Parsed exam data:', examData);
                 console.log('Parsed answers data:', answersData);
 
-                setExam(examData);
+                // Merge with current exam definition to get latest metadata (like answerKeyPdf)
+                let currentExamDef = null;
+                for (const category in exams) {
+                    const found = exams[category].find(e => e.id === examData.id);
+                    if (found) {
+                        currentExamDef = found;
+                        break;
+                    }
+                }
+
+                // Merge: use saved exam data but override with current definition's metadata
+                const mergedExam = currentExamDef
+                    ? { ...examData, ...currentExamDef }
+                    : examData;
+
+                console.log('Merged exam data:', mergedExam);
+
+                setExam(mergedExam);
                 setUserAnswers(answersData);
 
                 // Get questions for this exam

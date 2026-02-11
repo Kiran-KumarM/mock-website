@@ -1,6 +1,9 @@
 // Question Bank for Indian Banking Exams
 // Organized by exam type and year
 
+import { ibpsPoPre2025Aug24Questions } from './ibps-po-pre-2025-aug-24';
+
+
 export const examCategories = [
   {
     id: 'ibps-po-prelims',
@@ -20,6 +23,22 @@ export const examYears = [2026, 2025, 2024, 2023, 2022];
 
 export const exams = {
   'ibps-po-prelims': [
+    {
+      id: 'ibps-po-prelims-2025-aug-24-shift-1',
+      categoryId: 'ibps-po-prelims',
+      year: 2025,
+      title: 'IBPS PO Prelims 2025 (Aug 24 - Shift 1)',
+      duration: 60, // minutes
+      totalQuestions: 100,
+      description: 'Memory-based paper: Reasoning Ability (35), English Language (30), Quantitative Aptitude (35)',
+      difficulty: 'Medium',
+      sections: [
+        { name: 'Reasoning Ability', questions: 35 },
+        { name: 'English Language', questions: 30 },
+        { name: 'Quantitative Aptitude', questions: 35 }
+      ],
+      answerKeyPdf: '/pdfs/ibps-po-prelims-2025-aug-24-shift-1.pdf', // Optional: Path to answer key PDF
+    },
     {
       id: 'ibps-po-prelims-2025-aug-23-shift-1',
       categoryId: 'ibps-po-prelims',
@@ -1555,12 +1574,15 @@ const mainsQuestions = [
 // Map all exam IDs to their question sets
 export const questions = {};
 
+// Assign IBPS PO Pre 2025 (Aug 24 - Shift 1) questions
+questions['ibps-po-prelims-2025-aug-24-shift-1'] = ibpsPoPre2025Aug24Questions;
+
 // Assign IBPS PO Pre 2025 (Aug 23 - Shift 1) questions
 questions['ibps-po-prelims-2025-aug-23-shift-1'] = ibpspo2025Questions;
 
 // Assign prelims questions to all other prelims exam years
 exams['ibps-po-prelims'].forEach(exam => {
-  if (exam.id !== 'ibps-po-prelims-2025-aug-23-shift-1') {
+  if (exam.id !== 'ibps-po-prelims-2025-aug-23-shift-1' && exam.id !== 'ibps-po-prelims-2025-aug-24-shift-1') {
     questions[exam.id] = prelimsQuestions;
   }
 });
