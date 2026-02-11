@@ -1,0 +1,88 @@
+.timer-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: all var(--transition-normal);
+}
+
+.timer-container.warning {
+    border-color: var(--warning);
+    background: rgba(245, 158, 11, 0.1);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.timer-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.3));
+}
+
+.timer-container.warning .timer-icon {
+    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.5));
+}
+
+.timer-content {
+    flex: 1;
+}
+
+.timer-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timer-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: var(--spacing-sm);
+}
+
+.timer-container.warning .timer-display {
+    color: var(--warning);
+}
+
+.timer-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.timer-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 3px;
+    transition: width 1s linear;
+}
+
+.timer-container.warning .timer-progress-fill {
+    background: linear-gradient(90deg, var(--warning), #fbbf24);
+}
+
+@media (max-width: 768px) {
+    .timer-container {
+        padding: var(--spacing-md);
+    }
+
+    .timer-icon {
+        font-size: 1.5rem;
+    }
+
+    .timer-display {
+        font-size: 1.25rem;
+    }
+
+    .timer-label {
+        font-size: 0.75rem;
+    }
+}
