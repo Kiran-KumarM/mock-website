@@ -5,6 +5,7 @@ function ManualQuestionEntry({ onSave, onCancel, pdfText }) {
     const [questions, setQuestions] = useState([createEmptyQuestion()]);
     const [examTitle, setExamTitle] = useState('Custom Mock Test');
     const [duration, setDuration] = useState(60);
+    const [copySuccess, setCopySuccess] = useState(false);
 
     function createEmptyQuestion() {
         return {
@@ -16,6 +17,17 @@ function ManualQuestionEntry({ onSave, onCancel, pdfText }) {
             explanation: '',
         };
     }
+
+    const handleCopyText = async () => {
+        try {
+            await navigator.clipboard.writeText(pdfText);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy text:', err);
+            alert('Failed to copy text to clipboard');
+        }
+    };
 
     const handleAddQuestion = () => {
         setQuestions([...questions, createEmptyQuestion()]);
@@ -76,7 +88,16 @@ function ManualQuestionEntry({ onSave, onCancel, pdfText }) {
 
             {pdfText && (
                 <div className="pdf-text-reference">
-                    <h3>📄 Extracted PDF Text (for reference)</h3>
+                    <div className="pdf-text-header">
+                        <h3>📄 Extracted PDF Text (for reference)</h3>
+                        <button
+                            className={`btn-copy ${copySuccess ? 'copied' : ''}`}
+                            onClick={handleCopyText}
+                            title="Copy to clipboard"
+                        >
+                            {copySuccess ? '✓ Copied!' : '📋 Copy Text'}
+                        </button>
+                    </div>
                     <div className="pdf-text-content">{pdfText}</div>
                 </div>
             )}

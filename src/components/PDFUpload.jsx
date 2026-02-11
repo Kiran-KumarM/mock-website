@@ -46,9 +46,9 @@ function PDFUpload({ onSaveQuestions, onClose }) {
             return;
         }
 
-        // Validate file size (max 10MB)
-        if (selectedFile.size > 10 * 1024 * 1024) {
-            setError('File size must be less than 10MB');
+        // Validate file size (max 30MB)
+        if (selectedFile.size > 30 * 1024 * 1024) {
+            setError('File size must be less than 30MB');
             return;
         }
 
@@ -186,7 +186,7 @@ function PDFUpload({ onSaveQuestions, onClose }) {
                                     />
                                     <span className="btn-primary">Browse Files</span>
                                 </label>
-                                <p className="file-info">PDF files only, max 10MB</p>
+                                <p className="file-info">PDF files only, max 30MB</p>
                             </div>
                         </div>
 
